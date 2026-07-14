@@ -260,6 +260,7 @@ elif pagina == "Sobre":
             - **Respeito** — tratamento digno a clientes, colaboradores e parceiros
             - **Sustentabilidade** — responsabilidade ambiental e social
             - **Diversidade** — valorização da pluralidade e inclusão
+            - **Lucro** — geração de valor e sustentabilidade financeira do negócio
             """
         )
 
@@ -288,11 +289,11 @@ elif pagina == "Sobre":
             **Palavras de risco** — termos que podem gerar expectativa exagerada
             ou comprometer a credibilidade da marca:
             `melhor`, `maior`, `número um`, `líder`, `garantia`, `promessa`,
-            `todos`, `sempre`, `nunca`, `lucro`
+            `todos`, `sempre`, `nunca`
 
             **Temas proibidos** — não podem ser utilizados em comunicações:
             `concorrente`, `política`, `religião`, `discriminação`,
-            `promessa irreal`, `milagre`, `cura`, `lucro`
+            `promessa irreal`, `milagre`, `cura`
 
             **Comparação direta** com concorrentes é desaconselhada e penalizada no score.
             """

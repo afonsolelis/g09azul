@@ -5,7 +5,7 @@ from typing import Optional
 
 PALAVRAS_PROIBIDAS = [
     "concorrente", "política", "religião", "discriminação",
-    "promessa irreal", "garantia", "milagre", "cura", "lucro",
+    "promessa irreal", "garantia", "milagre", "cura",
 ]
 
 DIRETRIZES_AZUL = {
@@ -15,7 +15,7 @@ DIRETRIZES_AZUL = {
     ],
     "valores": [
         "segurança", "inovação", "eficiência", "respeito",
-        "sustentabilidade", "diversidade",
+        "sustentabilidade", "diversidade", "lucro",
     ],
     "vieses_proibidos": [
         "promessa excessiva", "tom agressivo", "desrespeito",
@@ -165,7 +165,7 @@ def _calcular_score_risco(descricao: str, objetivos: str, publico_alvo: str) -> 
 
     palavras_risco = [
         "melhor", "maior", "número um", "lider", "garantia",
-        "promessa", "todos", "sempre", "nunca", "lucro",
+        "promessa", "todos", "sempre", "nunca",
     ]
     encontradas = [p for p in palavras_risco if p in texto]
     if encontradas:
