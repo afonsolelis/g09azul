@@ -1,194 +1,267 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from datetime import datetime, timedelta
-import time
+from datetime import datetime, timezone
+
+from engine import analisar_ideia
 
 st.set_page_config(
-    page_title="Exemplo Streamlit",
-    page_icon="📊",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title="Alinhamento Azul — Validador de Ideias",
+    page_icon="🔵",
+    layout="centered",
+    initial_sidebar_state="expanded",
 )
 
-@st.cache_data
-def gerar_dados_exemplo():
-    np.random.seed(42)
-    datas = pd.date_range(start='2024-01-01', end='2024-12-31', freq='D')
-    dados = {
-        'data': datas,
-        'vendas': np.random.randint(100, 1000, len(datas)),
-        'categoria': np.random.choice(['Eletrônicos', 'Roupas', 'Casa', 'Esportes'], len(datas)),
-        'regiao': np.random.choice(['Norte', 'Sul', 'Leste', 'Oeste'], len(datas)),
-        'cliente_novo': np.random.choice([True, False], len(datas), p=[0.3, 0.7])
-    }
-    return pd.DataFrame(dados)
+if "historico" not in st.session_state:
+    st.session_state.historico = []
 
-def main():
-    st.title("📊 Dashboard de Exemplo - Streamlit")
-    st.markdown("---")
-    
-    df = gerar_dados_exemplo()
-    
-    with st.sidebar:
-        st.header("🔧 Filtros")
-        
-        categorias = st.multiselect(
-            "Categorias",
-            options=df['categoria'].unique(),
-            default=df['categoria'].unique()
-        )
-        
-        regioes = st.multiselect(
-            "Regiões",
-            options=df['regiao'].unique(),
-            default=df['regiao'].unique()
-        )
-        
-        data_inicio = st.date_input(
-            "Data Início",
-            value=df['data'].min(),
-            min_value=df['data'].min(),
-            max_value=df['data'].max()
-        )
-        
-        data_fim = st.date_input(
-            "Data Fim",
-            value=df['data'].max(),
-            min_value=df['data'].min(),
-            max_value=df['data'].max()
-        )
-        
-        mostrar_raw = st.checkbox("Mostrar dados brutos", False)
-    
-    df_filtrado = df[
-        (df['categoria'].isin(categorias)) &
-        (df['regiao'].isin(regioes)) &
-        (df['data'] >= pd.Timestamp(data_inicio)) &
-        (df['data'] <= pd.Timestamp(data_fim))
-    ]
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.metric(
-            "Total Vendas",
-            f"R$ {df_filtrado['vendas'].sum():,.0f}",
-            delta=f"{np.random.randint(-10, 10)}%"
-        )
-    
-    with col2:
-        st.metric(
-            "Média Diária",
-            f"R$ {df_filtrado['vendas'].mean():,.0f}",
-            delta=f"{np.random.randint(-5, 5)}%"
-        )
-    
-    with col3:
-        st.metric(
-            "Clientes Novos",
-            f"{df_filtrado['cliente_novo'].sum():,}",
-            delta=f"{np.random.randint(-3, 3)}%"
-        )
-    
-    with col4:
-        st.metric(
-            "Dias no Período",
-            f"{len(df_filtrado):,}",
-        )
-    
-    st.markdown("---")
-    
-    tab1, tab2, tab3, tab4 = st.tabs(["📈 Série Temporal", "📊 Por Categoria", "🗺️ Por Região", "📋 Dados"])
-    
-    with tab1:
-        col_left, col_right = st.columns([2, 1])
-        
-        with col_left:
-            fig_linha = px.line(
-                df_filtrado.groupby('data')['vendas'].sum().reset_index(),
-                x='data', y='vendas',
-                title='Vendas Diárias',
-                labels={'data': 'Data', 'vendas': 'Vendas (R$)'}
-            )
-            fig_linha.update_layout(height=400)
-            st.plotly_chart(fig_linha, use_container_width=True)
-        
-        with col_right:
-            fig_area = px.area(
-                df_filtrado.groupby('data')['vendas'].sum().reset_index(),
-                x='data', y='vendas',
-                title='Vendas Acumuladas'
-            )
-            fig_area.update_layout(height=400)
-            st.plotly_chart(fig_area, use_container_width=True)
-    
-    with tab2:
-        col_left, col_right = st.columns(2)
-        
-        with col_left:
-            vendas_cat = df_filtrado.groupby('categoria')['vendas'].sum().reset_index()
-            fig_bar = px.bar(
-                vendas_cat, x='categoria', y='vendas',
-                title='Vendas por Categoria',
-                color='categoria',
-                text_auto=True
-            )
-            st.plotly_chart(fig_bar, use_container_width=True)
-        
-        with col_right:
-            fig_pie = px.pie(
-                vendas_cat, values='vendas', names='categoria',
-                title='Distribuição por Categoria'
-            )
-            st.plotly_chart(fig_pie, use_container_width=True)
-    
-    with tab3:
-        col_left, col_right = st.columns(2)
-        
-        with col_left:
-            vendas_reg = df_filtrado.groupby('regiao')['vendas'].sum().reset_index()
-            fig_bar_reg = px.bar(
-                vendas_reg, x='regiao', y='vendas',
-                title='Vendas por Região',
-                color='regiao',
-                text_auto=True
-            )
-            st.plotly_chart(fig_bar_reg, use_container_width=True)
-        
-        with col_right:
-            vendas_cat_reg = df_filtrado.groupby(['regiao', 'categoria'])['vendas'].sum().reset_index()
-            fig_heatmap = px.density_heatmap(
-                vendas_cat_reg, x='regiao', y='categoria', z='vendas',
-                title='Vendas: Região vs Categoria',
-                color_continuous_scale='Viridis'
-            )
-            st.plotly_chart(fig_heatmap, use_container_width=True)
-    
-    with tab4:
-        if mostrar_raw:
-            st.dataframe(df_filtrado, use_container_width=True, height=400)
-        else:
-            st.info("Marque 'Mostrar dados brutos' na barra lateral para ver a tabela completa")
-            
-            resumo = df_filtrado.groupby(['categoria', 'regiao']).agg({
-                'vendas': ['sum', 'mean', 'count'],
-                'cliente_novo': 'sum'
-            }).round(2)
-            resumo.columns = ['Total Vendas', 'Média Vendas', 'Qtd Registros', 'Clientes Novos']
-            st.dataframe(resumo, use_container_width=True)
-    
-    st.markdown("---")
+st.sidebar.image(
+    "https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png",
+    width=150,
+)
+st.sidebar.title("🔵 Alinhamento Azul")
+st.sidebar.markdown("---")
+pagina = st.sidebar.radio("Navegação", ["Nova Análise", "Histórico", "Sobre"])
+
+if pagina == "Nova Análise":
+    st.title("📋 Validação de Alinhamento com Padrões Azul")
     st.markdown(
-        """
-        <div style='text-align: center; color: #666;'>
-            Exemplo Streamlit | Dados simulados para demonstração
-        </div>
-        """,
-        unsafe_allow_html=True
+        "Preencha os campos abaixo para receber uma análise de alinhamento "
+        "da sua ideia com as diretrizes de marca, tom de voz e comunicação da Azul."
     )
 
-if __name__ == "__main__":
-    main()
+    with st.expander("📌 Instruções", expanded=False):
+        st.markdown(
+            """
+            - **Campos obrigatórios**: Descrição, Objetivos, Público-alvo, Canais
+            - A análise é **consultiva** — a aprovação final é sempre humana
+            - O resultado inclui score (0–100), parecer verde/amarelo/vermelho,
+              pontos fortes, riscos e recomendações
+            - Um ID de auditoria é gerado para cada análise
+            """
+        )
+
+    with st.form("form_analise"):
+        col1, col2 = st.columns(2)
+
+        with col1:
+            descricao = st.text_area(
+                "Descrição da ideia/projeto *",
+                height=120,
+                placeholder="Ex: Campanha sazonal de final de ano com foco em...",
+            )
+            objetivos = st.text_area(
+                "Objetivos esperados *",
+                height=100,
+                placeholder="Ex: Aumentar reconhecimento de marca em 15% no público...",
+            )
+
+        with col2:
+            publico_alvo = st.text_input(
+                "Público-alvo *",
+                placeholder="Ex: Jovens adultos 25–40 anos, viajantes frequentes",
+            )
+            canais = st.text_input(
+                "Canais/plataformas *",
+                placeholder="Ex: Instagram, E-mail, Site",
+            )
+
+        col3, col4 = st.columns(2)
+        with col3:
+            materiais = st.text_area(
+                "Materiais já existentes (opcional)",
+                height=80,
+                placeholder="Ex: Briefing criativo, artes anteriores, pesquisa...",
+            )
+        with col4:
+            cronograma = st.text_input(
+                "Cronograma ou prazo (opcional)",
+                placeholder="Ex: Lançamento em dezembro/2026",
+            )
+
+        duvidas = st.text_area(
+            "Dúvidas específicas (opcional)",
+            height=80,
+            placeholder="Ex: Gostaria de saber se o tom está adequado para...",
+        )
+
+        submitted = st.form_submit_button("🔍 Analisar Alinhamento", type="primary", width="stretch")
+
+    if submitted:
+        if not descricao.strip():
+            st.error("Descrição da ideia é obrigatória.")
+            st.stop()
+        if not objetivos.strip():
+            st.error("Objetivos esperados são obrigatórios.")
+            st.stop()
+        if not publico_alvo.strip():
+            st.error("Público-alvo é obrigatório.")
+            st.stop()
+        if not canais.strip():
+            st.error("Canais/plataformas é obrigatório.")
+            st.stop()
+
+        with st.spinner("🔄 Analisando alinhamento com os padrões Azul..."):
+            resultado = analisar_ideia(
+                descricao=descricao,
+                objetivos=objetivos,
+                publico_alvo=publico_alvo,
+                canais=canais,
+                materiais=materiais if materiais.strip() else None,
+                cronograma=cronograma if cronograma.strip() else None,
+                duvidas=duvidas if duvidas.strip() else None,
+            )
+
+        st.session_state.historico.append(resultado)
+
+        st.markdown("---")
+        st.subheader("📊 Resultado da Análise")
+
+        col_score, col_id = st.columns([2, 1])
+        with col_score:
+            score = resultado["score_final"]
+            nivel = resultado["nivel"]
+            if nivel == "verde":
+                cor = "#28a745"
+                emoji = "🟢"
+            elif nivel == "amarelo":
+                cor = "#ffc107"
+                emoji = "🟡"
+            else:
+                cor = "#dc3545"
+                emoji = "🔴"
+
+            st.markdown(
+                f"<h1 style='color: {cor};'>{emoji} {score:.0f}/100</h1>",
+                unsafe_allow_html=True,
+            )
+        with col_id:
+            st.markdown("**ID da Análise**")
+            st.code(resultado["id"])
+            st.caption(f"Gerado em {resultado['timestamp'][:19]} UTC")
+
+        st.markdown(f"### {resultado['parecer']}")
+
+        tabs = st.tabs(["📋 Detalhamento", "✅ Recomendações", "📌 Próximos Passos"])
+
+        with tabs[0]:
+            for cat, dados in resultado["categorias"].items():
+                cols = st.columns([3, 1, 4])
+                with cols[0]:
+                    st.markdown(f"**{dados['rótulo']}**")
+                with cols[1]:
+                    if dados["score"] >= 70:
+                        st.markdown(f"✅ **{dados['score']}**")
+                    elif dados["score"] >= 40:
+                        st.markdown(f"⚠️ **{dados['score']}**")
+                    else:
+                        st.markdown(f"❌ **{dados['score']}**")
+                with cols[2]:
+                    if dados["fortes"]:
+                        for f in dados["fortes"]:
+                            st.markdown(f"🟢 {f}")
+                    if dados["riscos"]:
+                        for r in dados["riscos"]:
+                            st.markdown(f"🔴 {r}")
+                    if not dados["fortes"] and not dados["riscos"]:
+                        st.markdown("—")
+                st.divider()
+
+            if resultado["inputs"]["materiais"]:
+                with st.expander("📎 Materiais informados"):
+                    st.write(resultado["inputs"]["materiais"])
+            if resultado["inputs"]["cronograma"]:
+                with st.expander("📅 Cronograma informado"):
+                    st.write(resultado["inputs"]["cronograma"])
+            if resultado["inputs"]["duvidas"]:
+                with st.expander("❓ Dúvidas específicas"):
+                    st.write(resultado["inputs"]["duvidas"])
+
+        with tabs[1]:
+            if resultado["recomendacoes"]:
+                for i, rec in enumerate(resultado["recomendacoes"], 1):
+                    st.markdown(f"{i}. {rec}")
+            else:
+                st.success("Nenhuma recomendação crítica — proposta bem alinhada!")
+
+        with tabs[2]:
+            for i, passo in enumerate(resultado["proximos_passos"], 1):
+                st.markdown(f"{i}. **{passo}**")
+
+        st.markdown("---")
+        st.info(
+            "⚠️ **Importante**: Esta é uma análise consultiva. "
+            "A aprovação final deve ser feita por um humano do time de Marketing "
+            "ou Compliance da Azul."
+        )
+
+elif pagina == "Histórico":
+    st.title("📜 Histórico de Análises")
+
+    if not st.session_state.historico:
+        st.info("Nenhuma análise realizada nesta sessão.")
+    else:
+        dados_hist = []
+        for h in reversed(st.session_state.historico):
+            dados_hist.append({
+                "ID": h["id"],
+                "Data": h["timestamp"][:19],
+                "Score": f"{h['score_final']:.0f}/100",
+                "Nível": h["nivel"].upper(),
+                "Ideia": h["inputs"]["descricao"][:80] + ("..." if len(h["inputs"]["descricao"]) > 80 else ""),
+            })
+
+        df_hist = pd.DataFrame(dados_hist)
+
+        col_cor = df_hist["Nível"].map({
+            "VERDE": "#28a745",
+            "AMARELO": "#ffc107",
+            "VERMELHO": "#dc3545",
+        })
+
+        st.dataframe(
+            df_hist.style.applymap(
+                lambda v: f"color: {col_cor.iloc[0]}" if v in col_cor.values else "",
+                subset=["Nível"],
+            ),
+            width="stretch",
+            hide_index=True,
+        )
+
+        st.markdown("---")
+        st.subheader("📈 Resumo da Sessão")
+        scores = [h["score_final"] for h in st.session_state.historico]
+        col_m, col_mm = st.columns(2)
+        col_m.metric("Média Geral", f"{sum(scores)/len(scores):.0f}/100")
+        col_mm.metric("Total de Análises", len(scores))
+
+        if st.button("🗑️ Limpar Histórico", type="secondary"):
+            st.session_state.historico = []
+            st.rerun()
+
+elif pagina == "Sobre":
+    st.title("🔵 Sobre o Alinhamento Azul")
+    st.markdown(
+        """
+        **Alinhamento Azul** é uma ferramenta de governança que ajuda
+        gestores, líderes e colaboradores das verticais a validar ideias
+        e projetos contra os padrões de marca, tom de voz e comunicação da Azul.
+
+        ### Como funciona
+        1. Você preenche os detalhes da sua ideia
+        2. O sistema analisa o alinhamento com as diretrizes da Azul
+        3. Você recebe um score (0–100) + parecer + recomendações
+
+        ### O que a ferramenta NÃO faz
+        - ❌ Aprovar projetos definitivamente (parecer consultivo)
+        - ❌ Gerar conteúdo final sem revisão humana
+        - ❌ Falar em nome da Azul como porta-voz oficial
+        - ❌ Tratar temas proibidos (política, religião, discriminação)
+
+        ### Privacidade
+        - Todas as análises são registradas com ID único para auditoria
+        - Os dados são armazenados apenas durante a sessão
+        """
+    )
+
+st.sidebar.markdown("---")
+st.sidebar.caption("🔵 Alinhamento Azul v1.0 • Ferramenta de Governança")
