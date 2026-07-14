@@ -246,17 +246,96 @@ elif pagina == "Sobre":
         2. O sistema analisa o alinhamento com as diretrizes da Azul
         3. Você recebe um score (0–100) + parecer + recomendações
 
-        ### O que a ferramenta NÃO faz
-        - ❌ Aprovar projetos definitivamente (parecer consultivo)
-        - ❌ Gerar conteúdo final sem revisão humana
-        - ❌ Falar em nome da Azul como porta-voz oficial
-        - ❌ Tratar temas proibidos (política, religião, discriminação)
-
-        ### Privacidade
-        - Todas as análises são registradas com ID único para auditoria
-        - Os dados são armazenados apenas durante a sessão
+        ---
         """
     )
+
+    with st.expander("🏢 Valores da Azul", expanded=True):
+        st.markdown(
+            """
+            As análises verificam se a proposta reflete os valores institucionais da Azul:
+            - **Segurança** — compromisso com a segurança em todas as operações
+            - **Inovação** — busca por soluções criativas e modernas
+            - **Eficiência** — otimização de recursos e processos
+            - **Respeito** — tratamento digno a clientes, colaboradores e parceiros
+            - **Sustentabilidade** — responsabilidade ambiental e social
+            - **Diversidade** — valorização da pluralidade e inclusão
+            """
+        )
+
+    with st.expander("🎯 Tom de Voz", expanded=True):
+        st.markdown(
+            """
+            O tom de voz recomendado para comunicações da Azul deve ser:
+            - **Acolhedor** — transmite conforto e pertencimento
+            - **Simples** — linguagem clara e acessível
+            - **Positivo** — foco em soluções e boas experiências
+            - **Transparente** — honesto e direto
+            - **Humano** — conecta com as emoções das pessoas
+            - **Próximo** — cria intimidade sem ser invasivo
+            - **Descomplicado** — remove barreiras e burocracia
+
+            **Vieses proibidos:** promessa excessiva, tom agressivo, desrespeito,
+            desinformação, exclusão.
+            """
+        )
+
+    with st.expander("⚠️ Regras de Compliance e Risco", expanded=True):
+        st.markdown(
+            """
+            A análise de risco verifica:
+
+            **Palavras de risco** — termos que podem gerar expectativa exagerada
+            ou comprometer a credibilidade da marca:
+            `melhor`, `maior`, `número um`, `líder`, `garantia`, `promessa`,
+            `todos`, `sempre`, `nunca`, `lucro`
+
+            **Temas proibidos** — não podem ser utilizados em comunicações:
+            `concorrente`, `política`, `religião`, `discriminação`,
+            `promessa irreal`, `milagre`, `cura`, `lucro`
+
+            **Comparação direta** com concorrentes é desaconselhada e penalizada no score.
+            """
+        )
+
+    st.markdown("---")
+
+    with st.expander("📊 Categorias de Avaliação", expanded=False):
+        st.markdown(
+            """
+            O score final (0–100) é composto por 6 categorias com pesos distintos:
+
+            | Categoria | Peso | O que avalia |
+            |---|---|---|
+            | Identidade de Marca | 30% | Menção à Azul e alinhamento com valores |
+            | Tom de Voz | 20% | Adequação ao tom de voz institucional |
+            | Aderência ao Público | 15% | Definição e adequação do público-alvo |
+            | Clareza dos Objetivos | 15% | Objetivos mensuráveis e concretos |
+            | Adequação aos Canais | 10% | Canais compatíveis com a estratégia |
+            | Análise de Risco | 10% | Palavras de risco, promessas, concorrência |
+            """
+        )
+
+    with st.expander("❌ O que a ferramenta NÃO faz", expanded=False):
+        st.markdown(
+            """
+            - ❌ Aprovar projetos definitivamente (parecer consultivo)
+            - ❌ Gerar conteúdo final sem revisão humana
+            - ❌ Falar em nome da Azul como porta-voz oficial
+            - ❌ Tratar temas proibidos (política, religião, discriminação)
+            - ❌ Dar garantias jurídicas ou de performance de campanha
+            - ❌ Substituir o time de Marketing (é um facilitador de governança)
+            """
+        )
+
+    with st.expander("🔒 Privacidade e Auditoria", expanded=False):
+        st.markdown(
+            """
+            - Todas as análises são registradas com ID único para auditoria
+            - Os dados são armazenados apenas durante a sessão (não persistem)
+            - Nenhum dado é enviado para terceiros
+            """
+        )
 
 st.sidebar.markdown("---")
 st.sidebar.caption("🔵 Alinhamento Azul v1.0 • Ferramenta de Governança")
