@@ -212,19 +212,14 @@ elif pagina == "Histórico":
 
         df_hist = pd.DataFrame(dados_hist)
 
-        col_cor = df_hist["Nível"].map({
-            "VERDE": "#28a745",
-            "AMARELO": "#ffc107",
-            "VERMELHO": "#dc3545",
-        })
-
         st.dataframe(
-            df_hist.style.applymap(
-                lambda v: f"color: {col_cor.iloc[0]}" if v in col_cor.values else "",
-                subset=["Nível"],
-            ),
+            df_hist,
             width="stretch",
             hide_index=True,
+            column_config={
+                "Score": st.column_config.TextColumn("Score", help="Pontuação de alinhamento"),
+                "Nível": st.column_config.TextColumn("Nível", help="Verde / Amarelo / Vermelho"),
+            },
         )
 
         st.markdown("---")
