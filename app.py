@@ -4,30 +4,346 @@ from datetime import datetime, timezone
 
 from engine import analisar_ideia
 
+# Cores da marca Azul
+AZUL_CORES = {
+    "azul_escuro": "#003366",
+    "azul_medio": "#0055A4",
+    "azul_claro": "#0077CC",
+    "azul_ceu": "#0099E5",
+    "azul_claro_claro": "#E6F2FA",
+    "branco": "#FFFFFF",
+    "cinza_claro": "#F5F5F5",
+    "cinza_medio": "#CCCCCC",
+    "cinza_escuro": "#666666",
+    "verde_sucesso": "#28A745",
+    "amarelo_atencao": "#FFC107",
+    "vermelho_erro": "#DC3545",
+}
+
 st.set_page_config(
     page_title="Alinhamento Azul — Validador de Ideias",
-    page_icon="🔵",
+    page_icon="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png",
     layout="centered",
     initial_sidebar_state="expanded",
 )
 
+# CSS customizado com cores da Azul
+st.markdown(f"""
+<style>
+    :root {{
+        --azul-escuro: {AZUL_CORES['azul_escuro']};
+        --azul-medio: {AZUL_CORES['azul_medio']};
+        --azul-claro: {AZUL_CORES['azul_claro']};
+        --azul-ceu: {AZUL_CORES['azul_ceu']};
+        --azul-bg: {AZUL_CORES['azul_claro_claro']};
+        --branco: {AZUL_CORES['branco']};
+        --cinza-claro: {AZUL_CORES['cinza_claro']};
+        --cinza-medio: {AZUL_CORES['cinza_medio']};
+        --cinza-escuro: {AZUL_CORES['cinza_escuro']};
+        --verde: {AZUL_CORES['verde_sucesso']};
+        --amarelo: {AZUL_CORES['amarelo_atencao']};
+        --vermelho: {AZUL_CORES['vermelho_erro']};
+    }}
+    
+    .stApp {{
+        background-color: var(--branco);
+    }}
+    
+    .main .block-container {{
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }}
+    
+    /* Sidebar styling */
+    section[data-testid="stSidebar"] {{
+        background-color: var(--azul-escuro) !important;
+    }}
+    
+    section[data-testid="stSidebar"] * {{
+        color: var(--branco) !important;
+    }}
+    
+    section[data-testid="stSidebar"] .stRadio label {{
+        color: var(--branco) !important;
+    }}
+    
+    section[data-testid="stSidebar"] .stMarkdown {{
+        color: var(--branco) !important;
+    }}
+    
+    section[data-testid="stSidebar"] hr {{
+        border-color: var(--azul-medio) !important;
+    }}
+    
+    section[data-testid="stSidebar"] .stCaption {{
+        color: var(--cinza-medio) !important;
+    }}
+    
+    /* Buttons */
+    .stButton > button[kind="primary"] {{
+        background-color: var(--azul-medio) !important;
+        border-color: var(--azul-medio) !important;
+        color: var(--branco) !important;
+    }}
+    
+    .stButton > button[kind="primary"]:hover {{
+        background-color: var(--azul-escuro) !important;
+        border-color: var(--azul-escuro) !important;
+    }}
+    
+    .stButton > button[kind="secondary"] {{
+        background-color: transparent !important;
+        border-color: var(--azul-medio) !important;
+        color: var(--azul-medio) !important;
+    }}
+    
+    .stButton > button[kind="secondary"]:hover {{
+        background-color: var(--azul-bg) !important;
+        border-color: var(--azul-escuro) !important;
+        color: var(--azul-escuro) !important;
+    }}
+    
+    /* Form submit button */
+    .stFormSubmitButton > button {{
+        background-color: var(--azul-medio) !important;
+        border-color: var(--azul-medio) !important;
+        color: var(--branco) !important;
+        width: 100% !important;
+    }}
+    
+    .stFormSubmitButton > button:hover {{
+        background-color: var(--azul-escuro) !important;
+        border-color: var(--azul-escuro) !important;
+    }}
+    
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {{
+        gap: 8px;
+        background-color: var(--cinza-claro);
+        border-radius: 8px;
+        padding: 4px;
+    }}
+    
+    .stTabs [data-baseweb="tab"] {{
+        background-color: transparent !important;
+        color: var(--cinza-escuro) !important;
+        border-radius: 6px !important;
+        font-weight: 500 !important;
+    }}
+    
+    .stTabs [aria-selected="true"] {{
+        background-color: var(--azul-medio) !important;
+        color: var(--branco) !important;
+    }}
+    
+    /* Inputs */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea {{
+        border-color: var(--cinza-medio) !important;
+    }}
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {{
+        border-color: var(--azul-medio) !important;
+        box-shadow: 0 0 0 2px var(--azul-bg) !important;
+    }}
+    
+    /* Expander */
+    .streamlit-expanderHeader {{
+        background-color: var(--azul-bg) !important;
+        border-color: var(--azul-claro) !important;
+        color: var(--azul-escuro) !important;
+        font-weight: 600 !important;
+    }}
+    
+    .streamlit-expanderContent {{
+        border-color: var(--azul-claro) !important;
+    }}
+    
+    /* Metric cards */
+    .stMetric {{
+        background-color: var(--azul-bg);
+        border: 1px solid var(--azul-claro);
+        border-radius: 8px;
+        padding: 1rem;
+    }}
+    
+    /* Dataframe */
+    .stDataFrame {{
+        border: 1px solid var(--cinza-medio);
+        border-radius: 8px;
+    }}
+    
+    /* Divider */
+    hr {{
+        border-color: var(--cinza-medio) !important;
+    }}
+    
+    /* Headers */
+    h1, h2, h3, h4, h5, h6 {{
+        color: var(--azul-escuro) !important;
+    }}
+    
+    /* Info/Success/Warning/Error boxes */
+    .stAlert {{
+        border-radius: 8px !important;
+    }}
+    
+    .stSuccess {{
+        background-color: #E8F5E9 !important;
+        border-color: var(--verde) !important;
+        color: #1B5E20 !important;
+    }}
+    
+    .stInfo {{
+        background-color: var(--azul-bg) !important;
+        border-color: var(--azul-claro) !important;
+        color: var(--azul-escuro) !important;
+    }}
+    
+    .stWarning {{
+        background-color: #FFF8E1 !important;
+        border-color: var(--amarelo) !important;
+        color: #F57F17 !important;
+    }}
+    
+    .stError {{
+        background-color: #FDEDEC !important;
+        border-color: var(--vermelho) !important;
+        color: #C62828 !important;
+    }}
+    
+    /* Code blocks */
+    code {{
+        background-color: var(--azul-bg) !important;
+        color: var(--azul-escuro) !important;
+        border-radius: 4px;
+        padding: 2px 6px;
+    }}
+    
+    /* Logo container */
+    .azul-logo-container {{
+        text-align: center;
+        padding: 1rem 0;
+    }}
+    
+    .azul-logo-container img {{
+        max-width: 180px;
+        height: auto;
+    }}
+    
+    /* Custom header */
+    .azul-header {{
+        background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
+        color: white;
+        padding: 2rem 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }}
+    
+    .azul-header h1 {{
+        color: white !important;
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }}
+    
+    .azul-header p {{
+        color: rgba(255,255,255,0.9) !important;
+        margin: 0.5rem 0 0 0;
+        font-size: 1.1rem;
+    }}
+    
+    /* Score display */
+    .score-circle {{
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        font-weight: 700;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }}
+    
+    .score-circle.verde {{
+        background: linear-gradient(135deg, #28A745 0%, #1E7E34 100%);
+    }}
+    
+    .score-circle.amarelo {{
+        background: linear-gradient(135deg, #FFC107 0%, #F57F17 100%);
+        color: #333;
+    }}
+    
+    .score-circle.vermelho {{
+        background: linear-gradient(135deg, #DC3545 0%, #C62828 100%);
+    }}
+    
+    .score-circle .score-value {{
+        font-size: 2.5rem;
+        line-height: 1;
+    }}
+    
+    .score-circle .score-label {{
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        opacity: 0.9;
+    }}
+    
+    /* Category cards */
+    .category-card {{
+        background: var(--branco);
+        border: 1px solid var(--cinza-medio);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+    }}
+    
+    .category-card.high {{
+        border-left: 4px solid var(--verde);
+    }}
+    
+    .category-card.medium {{
+        border-left: 4px solid var(--amarelo);
+    }}
+    
+    .category-card.low {{
+        border-left: 4px solid var(--vermelho);
+    }}
+</style>
+""", unsafe_allow_html=True)
+
 if "historico" not in st.session_state:
     st.session_state.historico = []
 
-st.sidebar.image(
-    "https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png",
-    width=150,
-)
-st.sidebar.title("🔵 Alinhamento Azul")
-st.sidebar.markdown("---")
-pagina = st.sidebar.radio("Navegação", ["Nova Análise", "Histórico", "Sobre"])
+# Sidebar com logo da Azul
+with st.sidebar:
+    st.markdown("""
+    <div class="azul-logo-container">
+        <img src="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png" alt="Azul Linhas Aéreas">
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<h2 style='color: white; text-align: center; margin-bottom: 0.5rem;'>Alinhamento Azul</h2>", unsafe_allow_html=True)
+    st.markdown("<hr style='border-color: #0055A4;'>", unsafe_allow_html=True)
+    
+    pagina = st.radio("Navegação", ["Nova Análise", "Histórico", "Sobre"], label_visibility="collapsed")
+    
+    st.markdown("<hr style='border-color: #0055A4;'>", unsafe_allow_html=True)
+    st.caption("🔵 Alinhamento Azul v1.0 • Ferramenta de Governança")
 
 if pagina == "Nova Análise":
-    st.title("📋 Validação de Alinhamento com Padrões Azul")
-    st.markdown(
-        "Preencha os campos abaixo para receber uma análise de alinhamento "
-        "da sua ideia com as diretrizes de marca, tom de voz e comunicação da Azul."
-    )
+    st.markdown("""
+    <div class="azul-header">
+        <h1>📋 Validação de Alinhamento com Padrões Azul</h1>
+        <p>Preencha os campos abaixo para receber uma análise de alinhamento da sua ideia com as diretrizes de marca, tom de voz e comunicação da Azul.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     with st.expander("📌 Instruções", expanded=False):
         st.markdown(
@@ -121,17 +437,22 @@ if pagina == "Nova Análise":
             score = resultado["score_final"]
             nivel = resultado["nivel"]
             if nivel == "verde":
-                cor = "#28a745"
+                score_class = "verde"
                 emoji = "🟢"
             elif nivel == "amarelo":
-                cor = "#ffc107"
+                score_class = "amarelo"
                 emoji = "🟡"
             else:
-                cor = "#dc3545"
+                score_class = "vermelho"
                 emoji = "🔴"
 
             st.markdown(
-                f"<h1 style='color: {cor};'>{emoji} {score:.0f}/100</h1>",
+                f"""
+                <div class="score-circle {score_class}">
+                    <span class="score-value">{emoji} {score:.0f}</span>
+                    <span class="score-label">/ 100</span>
+                </div>
+                """,
                 unsafe_allow_html=True,
             )
         with col_id:
@@ -260,7 +581,6 @@ elif pagina == "Sobre":
             - **Respeito** — tratamento digno a clientes, colaboradores e parceiros
             - **Sustentabilidade** — responsabilidade ambiental e social
             - **Diversidade** — valorização da pluralidade e inclusão
-            - **Lucro** — geração de valor e sustentabilidade financeira do negócio
             """
         )
 

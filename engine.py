@@ -15,7 +15,7 @@ DIRETRIZES_AZUL = {
     ],
     "valores": [
         "segurança", "inovação", "eficiência", "respeito",
-        "sustentabilidade", "diversidade", "lucro",
+        "sustentabilidade", "diversidade",
     ],
     "vieses_proibidos": [
         "promessa excessiva", "tom agressivo", "desrespeito",
