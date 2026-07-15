@@ -1,4 +1,4 @@
-# g09azul (:
+# Lazuli (:
 1. Problema central
 Em uma frase: qual dor real do parceiro esta solução resolve?
 A dor real que esta solução resolve é a falta de alinhamento e governança rápida entre as verticais e o marketing/padrões da Azul, gerando ideias desalinhadas, retrabalho, projetos iniciados sem validação e risco de inconsistência de marca/comunicação.

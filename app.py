@@ -1,8 +1,13 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timezone
+from pathlib import Path
 
 from engine import analisar_ideia
+from db import salvar_analise, listar_analises, limpar_analises
+from chatbot import responder_chatbot
+
+LOGO_PATH = Path(__file__).parent / "logo_lazuli.svg"
 
 # Cores da marca Azul
 AZUL_CORES = {
@@ -21,8 +26,8 @@ AZUL_CORES = {
 }
 
 st.set_page_config(
-    page_title="Alinhamento Azul — Validador de Ideias",
-    page_icon="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png",
+    page_title="Lazuli — Validador de Alinhamento",
+    page_icon="📋",
     layout="centered",
     initial_sidebar_state="expanded",
 )
@@ -323,21 +328,27 @@ if "historico" not in st.session_state:
 
 # Sidebar com logo da Azul
 with st.sidebar:
-    st.markdown("""
-    <div class="azul-logo-container">
-        <img src="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png" alt="Azul Linhas Aéreas">
-    </div>
-    """, unsafe_allow_html=True)
+    if LOGO_PATH.exists():
+        st.image(str(LOGO_PATH), width=160)
+    else:
+        st.markdown("""
+        <div class="azul-logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png" alt="Azul Linhas Aéreas">
+        </div>
+        """, unsafe_allow_html=True)
     
-    st.markdown("<h2 style='color: white; text-align: center; margin-bottom: 0.5rem;'>Alinhamento Azul</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: white; text-align: center; margin-bottom: 0.5rem;'>Lazuli</h2>", unsafe_allow_html=True)
     st.markdown("<hr style='border-color: #0055A4;'>", unsafe_allow_html=True)
     
     pagina = st.radio("Navegação", ["Nova Análise", "Histórico", "Sobre"], label_visibility="collapsed")
     
     st.markdown("<hr style='border-color: #0055A4;'>", unsafe_allow_html=True)
-    st.caption("🔵 Alinhamento Azul v1.0 • Ferramenta de Governança")
+    st.caption("🔵 Lazuli v1.0 • Ferramenta de Governança")
 
 if pagina == "Nova Análise":
+    if LOGO_PATH.exists():
+        st.image(str(LOGO_PATH), width=240)
+
     st.markdown("""
     <div class="azul-header">
         <h1>📋 Validação de Alinhamento com Padrões Azul</h1>
@@ -428,6 +439,8 @@ if pagina == "Nova Análise":
             )
 
         st.session_state.historico.append(resultado)
+        salvar_analise(resultado)
+        st.session_state.ultima_analise = resultado
 
         st.markdown("---")
         st.subheader("📊 Resultado da Análise")
@@ -515,14 +528,38 @@ if pagina == "Nova Análise":
             "ou Compliance da Azul."
         )
 
+        st.markdown("---")
+        st.subheader("💬 Tire suas dúvidas (Lazuli)")
+
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        contexto_chat = st.session_state.get("ultima_analise")
+
+        for role, msg in st.session_state.chat_history:
+            with st.chat_message(role):
+                st.markdown(msg)
+
+        pergunta_usuario = st.chat_input("Pergunte algo sobre a análise ou os padrões da Azul...")
+        if pergunta_usuario:
+            st.session_state.chat_history.append(("user", pergunta_usuario))
+            with st.chat_message("user"):
+                st.markdown(pergunta_usuario)
+            resposta = responder_chatbot(pergunta_usuario, contexto_chat)
+            st.session_state.chat_history.append(("assistant", resposta))
+            with st.chat_message("assistant"):
+                st.markdown(resposta)
+
 elif pagina == "Histórico":
     st.title("📜 Histórico de Análises")
 
-    if not st.session_state.historico:
-        st.info("Nenhuma análise realizada nesta sessão.")
+    historico_db = listar_analises()
+
+    if not historico_db:
+        st.info("Nenhuma análise registrada no banco de dados (SQLite).")
     else:
         dados_hist = []
-        for h in reversed(st.session_state.historico):
+        for h in historico_db:
             dados_hist.append({
                 "ID": h["id"],
                 "Data": h["timestamp"][:19],
@@ -544,21 +581,23 @@ elif pagina == "Histórico":
         )
 
         st.markdown("---")
-        st.subheader("📈 Resumo da Sessão")
-        scores = [h["score_final"] for h in st.session_state.historico]
+        st.subheader("📈 Resumo")
+        scores = [h["score_final"] for h in historico_db]
         col_m, col_mm = st.columns(2)
         col_m.metric("Média Geral", f"{sum(scores)/len(scores):.0f}/100")
         col_mm.metric("Total de Análises", len(scores))
 
         if st.button("🗑️ Limpar Histórico", type="secondary"):
+            limpar_analises()
             st.session_state.historico = []
+            st.session_state.chat_history = []
             st.rerun()
 
 elif pagina == "Sobre":
-    st.title("🔵 Sobre o Alinhamento Azul")
+    st.title("🔵 Sobre o Lazuli")
     st.markdown(
         """
-        **Alinhamento Azul** é uma ferramenta de governança que ajuda
+        **Lazuli** é uma ferramenta de governança que ajuda
         gestores, líderes e colaboradores das verticais a validar ideias
         e projetos contra os padrões de marca, tom de voz e comunicação da Azul.
 
@@ -659,4 +698,5 @@ elif pagina == "Sobre":
         )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("🔵 Alinhamento Azul v1.0 • Ferramenta de Governança")
+st.sidebar.caption("🔵 Lazuli v1.0 • Ferramenta de Governança")
+ 
