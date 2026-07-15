@@ -29,7 +29,7 @@ AZUL_CORES = {
 st.set_page_config(
     page_title="Lazuli — Validador de Alinhamento",
     page_icon="📋",
-    layout="wide",                    # ← MELHORADO
+    layout="wide",
     initial_sidebar_state="expanded",
 )
 
@@ -54,12 +54,10 @@ st.markdown(f"""
     .stApp {{ background-color: var(--branco); }}
     .main .block-container {{ padding-top: 1.5rem; padding-bottom: 2rem; max-width: 1280px; }}
     
-    /* Sidebar */
     section[data-testid="stSidebar"] {{ background-color: var(--azul-escuro) !important; }}
     section[data-testid="stSidebar"] * {{ color: var(--branco) !important; }}
     section[data-testid="stSidebar"] hr {{ border-color: var(--azul-medio) !important; }}
     
-    /* Botões */
     .stButton > button[kind="primary"] {{
         background-color: var(--azul-medio) !important;
         border-color: var(--azul-medio) !important;
@@ -75,11 +73,9 @@ st.markdown(f"""
         font-weight: 500;
     }}
     
-    /* Tabs */
     .stTabs [data-baseweb="tab-list"] {{ background-color: var(--cinza-claro); border-radius: 10px; padding: 4px; }}
     .stTabs [aria-selected="true"] {{ background-color: var(--azul-medio) !important; color: white !important; }}
     
-    /* Inputs */
     .stTextInput > div > div > input, .stTextArea > div > div > textarea {{
         border-color: var(--cinza-medio) !important;
         border-radius: 8px;
@@ -89,7 +85,6 @@ st.markdown(f"""
         box-shadow: 0 0 0 3px var(--azul-bg) !important;
     }}
     
-    /* Score Circle */
     .score-circle {{
         width: 140px; height: 140px; border-radius: 50%;
         display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -102,7 +97,6 @@ st.markdown(f"""
     .score-circle .score-value {{ font-size: 2.8rem; line-height: 1; }}
     .score-circle .score-label {{ font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }}
     
-    /* Category Cards - NOVO E MELHORADO */
     .category-card {{
         background: white;
         border: 1px solid var(--cinza-medio);
@@ -120,13 +114,10 @@ st.markdown(f"""
     .category-card.medium {{ border-left: 5px solid var(--amarelo); }}
     .category-card.low {{ border-left: 5px solid var(--vermelho); }}
     
-    .category-card h4 {{ color: var(--azul-escuro); margin: 0; }}
-    
-    /* Header */
     .azul-header {{
         background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
         color: white; padding: 2.25rem 2rem; border-radius: 16px;
-        margin-bottom: 2rem; text-align: center;
+        margin-bottom: 1.5rem; text-align: center;
     }}
     .azul-header h1 {{ color: white !important; margin: 0; font-size: 2.1rem; font-weight: 700; }}
     .azul-header p {{ color: rgba(255,255,255,0.92) !important; margin-top: 0.6rem; font-size: 1.1rem; }}
@@ -184,7 +175,7 @@ def gerar_relatorio_md(r):
     linhas.extend([
         "",
         "---",
-        "*Relatório gerado automaticamente pelo Lazuli v1.0 — Ferramenta de Governança de Marca da Azul.*",
+        "*Relatório gerado automaticamente pelo Lazuli v1.1 — Ferramenta de Governança de Marca da Azul.*",
         "",
         "*Este documento é confidencial e de uso interno.*"
     ])
@@ -192,7 +183,7 @@ def gerar_relatorio_md(r):
 
 
 def exibir_analise(resultado):
-    """Renderiza o resultado da análise de forma bonita e reutilizável"""
+    """Renderiza o resultado da análise de forma bonita"""
     st.markdown("---")
     st.subheader("📊 Resultado da Análise")
     
@@ -217,7 +208,6 @@ def exibir_analise(resultado):
         st.code(resultado["id"])
         st.caption(f"Gerado em {resultado['timestamp'][:19]} UTC")
     
-    # Parecer destacado
     cor_parecer = {"verde": "#28A745", "amarelo": "#F57F17", "vermelho": "#DC3545"}.get(nivel, "#003366")
     st.markdown(
         f"""
@@ -270,7 +260,6 @@ def exibir_analise(resultado):
             """
             st.markdown(card_html, unsafe_allow_html=True)
         
-        # Campos opcionais
         inputs = resultado.get("inputs", {})
         if inputs.get("materiais"):
             with st.expander("📎 Materiais informados"):
@@ -294,7 +283,7 @@ def exibir_analise(resultado):
         for i, passo in enumerate(resultado.get("proximos_passos", []), 1):
             st.markdown(f"**{i}.** {passo}")
     
-    # ==================== EXPORTAÇÃO ====================
+    # Exportação
     st.markdown("---")
     st.subheader("📥 Exportar Análise")
     col1, col2 = st.columns(2)
@@ -330,12 +319,12 @@ with st.sidebar:
     if LOGO_PATH.exists():
         st.image(str(LOGO_PATH), width=160)
     else:
-        st.markdown(
-            '<div style="text-align:center; padding:1rem 0;">'
-            '<img src="https://upload.wikimedia.org/wikipedia/pt/thumb/f/ff/Azul_Linhas_A%C3%A9reas_logo.svg/256px-Azul_Linhas_A%C3%A9reas_logo.svg.png" width="160">'
-            '</div>',
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div style="text-align: center; padding: 0.8rem 0;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/LOGO_AZUL_LINHAS_AEREAS.png" 
+                 width="140" alt="Azul Linhas Aéreas">
+        </div>
+        """, unsafe_allow_html=True)
     
     st.markdown("<h2 style='color:white; text-align:center; margin:0.3rem 0 0.8rem 0;'>Lazuli</h2>", unsafe_allow_html=True)
     st.markdown("<hr style='border-color:#0055A4; margin:0.3rem 0;'>", unsafe_allow_html=True)
@@ -352,12 +341,22 @@ with st.sidebar:
 # ==================== PÁGINA: NOVA ANÁLISE ====================
 if pagina == "Nova Análise":
     if LOGO_PATH.exists():
-        st.image(str(LOGO_PATH), width=220)
+        st.image(str(LOGO_PATH), width=200)
     
     st.markdown("""
     <div class="azul-header">
         <h1>📋 Validação de Alinhamento com Padrões Azul</h1>
         <p>Preencha os campos abaixo para receber uma análise completa de alinhamento da sua ideia com as diretrizes de marca, tom de voz e comunicação da Azul.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ==================== LOGO ABAIXO DO TÍTULO ====================
+    st.markdown("""
+    <div style="display: flex; justify-content: center; margin-bottom: 1.8rem;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/LOGO_AZUL_LINHAS_AEREAS.png" 
+             width="200" 
+             alt="Logo Azul Linhas Aéreas"
+             style="max-width: 200px; height: auto;">
     </div>
     """, unsafe_allow_html=True)
     
@@ -454,11 +453,11 @@ if pagina == "Nova Análise":
         st.session_state.historico.append(resultado)
         salvar_analise(resultado)
         st.session_state.ultima_analise = resultado
-        st.session_state.form_defaults = {}   # limpa o exemplo
+        st.session_state.form_defaults = {}
         
         exibir_analise(resultado)
         
-        # ==================== CHAT ====================
+        # Chat
         st.markdown("---")
         col_title, col_clear = st.columns([4, 1.3])
         with col_title:
@@ -515,14 +514,12 @@ elif pagina == "Histórico":
             },
         )
         
-        # Resumo
         st.markdown("---")
         col_m, col_t = st.columns(2)
         scores = [h["score_final"] for h in historico_db]
         col_m.metric("Média Geral", f"{sum(scores)/len(scores):.0f}/100")
         col_t.metric("Total de Análises", len(scores))
         
-        # Visualizar análise completa
         st.markdown("---")
         st.subheader("🔍 Visualizar Análise Completa")
         
@@ -591,6 +588,5 @@ elif pagina == "Sobre":
     st.markdown("---")
     st.caption("Lazuli v1.1 • Ferramenta interna de Governança de Marca • Azul Linhas Aéreas")
 
-# Rodapé da sidebar
 st.sidebar.markdown("---")
 st.sidebar.caption("🔵 Lazuli v1.1 • Ferramenta de Governança")
