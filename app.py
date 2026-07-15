@@ -21,9 +21,10 @@ AZUL_CORES = {
     "cinza_claro": "#F5F5F5",
     "cinza_medio": "#CCCCCC",
     "cinza_escuro": "#666666",
-    "verde_sucesso": "#28A745",
-    "amarelo_atencao": "#FFC107",
-    "vermelho_erro": "#DC3545",
+    # Cores vibrantes (verde, amarelo e vermelho)
+    "verde_vibrante": "#00C853",
+    "amarelo_vibrante": "#FFAB00",
+    "vermelho_vibrante": "#FF1744",
 }
 
 st.set_page_config(
@@ -33,22 +34,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ==================== CSS APRIMORADO ====================
+# ==================== CSS ATUALIZADO ====================
 st.markdown(f"""
 <style>
     :root {{
         --azul-escuro: {AZUL_CORES['azul_escuro']};
         --azul-medio: {AZUL_CORES['azul_medio']};
         --azul-claro: {AZUL_CORES['azul_claro']};
-        --azul-ceu: {AZUL_CORES['azul_ceu']};
         --azul-bg: {AZUL_CORES['azul_claro_claro']};
         --branco: {AZUL_CORES['branco']};
         --cinza-claro: {AZUL_CORES['cinza_claro']};
         --cinza-medio: {AZUL_CORES['cinza_medio']};
-        --cinza-escuro: {AZUL_CORES['cinza_escuro']};
-        --verde: {AZUL_CORES['verde_sucesso']};
-        --amarelo: {AZUL_CORES['amarelo_atencao']};
-        --vermelho: {AZUL_CORES['vermelho_erro']};
+        --verde: {AZUL_CORES['verde_vibrante']};
+        --amarelo: {AZUL_CORES['amarelo_vibrante']};
+        --vermelho: {AZUL_CORES['vermelho_vibrante']};
     }}
     
     .stApp {{ background-color: var(--branco); }}
@@ -56,7 +55,7 @@ st.markdown(f"""
     
     section[data-testid="stSidebar"] {{ background-color: var(--azul-escuro) !important; }}
     section[data-testid="stSidebar"] * {{ color: var(--branco) !important; }}
-    section[data-testid="stSidebar"] hr {{ border-color: var(--azul-medio) !important; }}
+    section[data-testid="stSidebar"] hr {{ border-color: #0055A4 !important; }}
     
     .stButton > button[kind="primary"] {{
         background-color: var(--azul-medio) !important;
@@ -70,20 +69,10 @@ st.markdown(f"""
         background-color: transparent !important;
         border-color: var(--azul-medio) !important;
         color: var(--azul-medio) !important;
-        font-weight: 500;
     }}
     
     .stTabs [data-baseweb="tab-list"] {{ background-color: var(--cinza-claro); border-radius: 10px; padding: 4px; }}
     .stTabs [aria-selected="true"] {{ background-color: var(--azul-medio) !important; color: white !important; }}
-    
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea {{
-        border-color: var(--cinza-medio) !important;
-        border-radius: 8px;
-    }}
-    .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus {{
-        border-color: var(--azul-medio) !important;
-        box-shadow: 0 0 0 3px var(--azul-bg) !important;
-    }}
     
     .score-circle {{
         width: 140px; height: 140px; border-radius: 50%;
@@ -91,9 +80,9 @@ st.markdown(f"""
         margin: 0 auto; font-weight: 700; color: white;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }}
-    .score-circle.verde {{ background: linear-gradient(135deg, #28A745 0%, #1E7E34 100%); }}
-    .score-circle.amarelo {{ background: linear-gradient(135deg, #FFC107 0%, #F57F17 100%); color: #333; }}
-    .score-circle.vermelho {{ background: linear-gradient(135deg, #DC3545 0%, #C62828 100%); }}
+    .score-circle.verde {{ background: linear-gradient(135deg, #00C853 0%, #00A040 100%); }}
+    .score-circle.amarelo {{ background: linear-gradient(135deg, #FFAB00 0%, #FF8F00 100%); color: #333; }}
+    .score-circle.vermelho {{ background: linear-gradient(135deg, #FF1744 0%, #D50000 100%); }}
     .score-circle .score-value {{ font-size: 2.8rem; line-height: 1; }}
     .score-circle .score-label {{ font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }}
     
@@ -106,13 +95,10 @@ st.markdown(f"""
         box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         transition: all 0.2s ease;
     }}
-    .category-card:hover {{
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    }}
-    .category-card.high {{ border-left: 5px solid var(--verde); }}
-    .category-card.medium {{ border-left: 5px solid var(--amarelo); }}
-    .category-card.low {{ border-left: 5px solid var(--vermelho); }}
+    .category-card:hover {{ transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }}
+    .category-card.high {{ border-left: 5px solid #00C853; }}
+    .category-card.medium {{ border-left: 5px solid #FFAB00; }}
+    .category-card.low {{ border-left: 5px solid #FF1744; }}
     
     .azul-header {{
         background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
@@ -175,7 +161,7 @@ def gerar_relatorio_md(r):
     linhas.extend([
         "",
         "---",
-        "*Relatório gerado automaticamente pelo Lazuli v1.1 — Ferramenta de Governança de Marca da Azul.*",
+        "*Relatório gerado automaticamente pelo Lazuli v1.2 — Ferramenta de Governança de Marca da Azul.*",
         "",
         "*Este documento é confidencial e de uso interno.*"
     ])
@@ -183,7 +169,6 @@ def gerar_relatorio_md(r):
 
 
 def exibir_analise(resultado):
-    """Renderiza o resultado da análise de forma bonita"""
     st.markdown("---")
     st.subheader("📊 Resultado da Análise")
     
@@ -208,7 +193,7 @@ def exibir_analise(resultado):
         st.code(resultado["id"])
         st.caption(f"Gerado em {resultado['timestamp'][:19]} UTC")
     
-    cor_parecer = {"verde": "#28A745", "amarelo": "#F57F17", "vermelho": "#DC3545"}.get(nivel, "#003366")
+    cor_parecer = {"verde": "#00C853", "amarelo": "#FFAB00", "vermelho": "#FF1744"}.get(nivel, "#003366")
     st.markdown(
         f"""
         <div style="background:#f8f9fa; border-left: 6px solid {cor_parecer}; 
@@ -225,11 +210,14 @@ def exibir_analise(resultado):
         for cat, dados in resultado["categorias"].items():
             score = dados["score"]
             if score >= 70:
-                nivel_class, score_color, score_emoji = "high", "#28A745", "✅"
+                nivel_class, score_color = "high", "#00C853"
+                score_emoji = "✅"
             elif score >= 40:
-                nivel_class, score_color, score_emoji = "medium", "#F57F17", "⚠️"
+                nivel_class, score_color = "medium", "#FFAB00"
+                score_emoji = "⚠️"
             else:
-                nivel_class, score_color, score_emoji = "low", "#DC3545", "❌"
+                nivel_class, score_color = "low", "#FF1744"
+                score_emoji = "❌"
             
             fortes = dados.get("fortes", []) or []
             riscos = dados.get("riscos", []) or []
@@ -248,11 +236,11 @@ def exibir_analise(resultado):
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
                     <div>
-                        <div style="font-weight:700; color:#28A745; margin-bottom:0.3rem; font-size:0.92rem;">PONTOS FORTES</div>
+                        <div style="font-weight:700; color:#00C853; margin-bottom:0.3rem; font-size:0.92rem;">PONTOS FORTES</div>
                         <ul style="margin:0; padding-left:1.15rem; font-size:0.92rem; line-height:1.55;">{fortes_html}</ul>
                     </div>
                     <div>
-                        <div style="font-weight:700; color:#DC3545; margin-bottom:0.3rem; font-size:0.92rem;">RISCOS / PONTOS DE ATENÇÃO</div>
+                        <div style="font-weight:700; color:#FF1744; margin-bottom:0.3rem; font-size:0.92rem;">RISCOS / PONTOS DE ATENÇÃO</div>
                         <ul style="margin:0; padding-left:1.15rem; font-size:0.92rem; line-height:1.55;">{riscos_html}</ul>
                     </div>
                 </div>
@@ -290,28 +278,15 @@ def exibir_analise(resultado):
     
     with col1:
         json_str = json.dumps(resultado, ensure_ascii=False, indent=2, default=str)
-        st.download_button(
-            "📄 Baixar como JSON",
-            data=json_str,
-            file_name=f"lazuli_analise_{resultado['id']}.json",
-            mime="application/json",
-            use_container_width=True
-        )
+        st.download_button("📄 Baixar como JSON", data=json_str,
+            file_name=f"lazuli_analise_{resultado['id']}.json", mime="application/json", use_container_width=True)
     
     with col2:
         md_content = gerar_relatorio_md(resultado)
-        st.download_button(
-            "📝 Baixar Relatório (Markdown)",
-            data=md_content,
-            file_name=f"relatorio_lazuli_{resultado['id']}.md",
-            mime="text/markdown",
-            use_container_width=True
-        )
+        st.download_button("📝 Baixar Relatório (Markdown)", data=md_content,
+            file_name=f"relatorio_lazuli_{resultado['id']}.md", mime="text/markdown", use_container_width=True)
     
-    st.info(
-        "⚠️ **Importante**: Esta é uma análise consultiva. "
-        "A aprovação final deve ser feita por um humano do time de Marketing ou Compliance da Azul."
-    )
+    st.info("⚠️ **Importante**: Esta é uma análise consultiva. A aprovação final deve ser feita por um humano do time de Marketing ou Compliance da Azul.")
 
 
 # ==================== SIDEBAR ====================
@@ -321,22 +296,17 @@ with st.sidebar:
     else:
         st.markdown("""
         <div style="text-align: center; padding: 0.8rem 0;">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/LOGO_AZUL_LINHAS_AEREAS.png" 
-                 width="140" alt="Azul Linhas Aéreas">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/LOGO_AZUL_LINHAS_AEREAS.png" width="140" alt="Azul Linhas Aéreas">
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("<h2 style='color:white; text-align:center; margin:0.3rem 0 0.8rem 0;'>Lazuli</h2>", unsafe_allow_html=True)
     st.markdown("<hr style='border-color:#0055A4; margin:0.3rem 0;'>", unsafe_allow_html=True)
     
-    pagina = st.radio(
-        "Navegação",
-        ["Nova Análise", "Histórico", "Sobre"],
-        label_visibility="collapsed"
-    )
+    pagina = st.radio("Navegação", ["Nova Análise", "Histórico", "Sobre"], label_visibility="collapsed")
     
     st.markdown("<hr style='border-color:#0055A4;'>", unsafe_allow_html=True)
-    st.caption("🔵 Lazuli v1.1 • Ferramenta de Governança")
+    st.caption("🔵 Lazuli v1.2 • Ferramenta de Governança")
 
 # ==================== PÁGINA: NOVA ANÁLISE ====================
 if pagina == "Nova Análise":
@@ -350,16 +320,32 @@ if pagina == "Nova Análise":
     </div>
     """, unsafe_allow_html=True)
 
-    # ==================== LOGO ABAIXO DO TÍTULO ====================
+    # ==================== LOGO ====================
     st.markdown("""
     <div style="display: flex; justify-content: center; margin-bottom: 1.8rem;">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/LOGO_AZUL_LINHAS_AEREAS.png" 
-             width="200" 
-             alt="Logo Azul Linhas Aéreas"
-             style="max-width: 200px; height: auto;">
+             width="200" alt="Logo Azul Linhas Aéreas" style="max-width: 200px; height: auto;">
     </div>
     """, unsafe_allow_html=True)
-    
+
+    # ==================== EXPLICAÇÃO INICIAL (NOVO) ====================
+    st.markdown("""
+    <div style="max-width: 950px; margin: 0 auto 2.2rem auto; background: #f8f9fa; padding: 1.6rem 2rem; 
+                border-radius: 14px; border-left: 6px solid #0055A4;">
+        <h3 style="margin-top:0; color:#003366;">👋 O que é o Lazuli?</h3>
+        <p>O <strong>Lazuli</strong> é uma ferramenta de governança da Azul que ajuda gestores e times a validar se suas ideias, campanhas e projetos estão alinhados com a identidade de marca, tom de voz e diretrizes de comunicação da empresa.</p>
+        
+        <p><strong>Como usar:</strong></p>
+        <ol style="margin-bottom: 0.8rem;">
+            <li>Preencha os campos do formulário com os detalhes da sua ideia ou projeto</li>
+            <li>Clique no botão <strong>"Analisar Alinhamento"</strong></li>
+            <li>Receba o score (0–100), o parecer, pontos fortes, riscos e recomendações</li>
+            <li>Use o chat no final da página para tirar dúvidas sobre a análise</li>
+        </ol>
+        <p style="margin-bottom:0; font-size:0.95rem;"><strong>⚠️ Importante:</strong> Esta é uma análise <strong>consultiva</strong>. A aprovação final sempre deve ser feita por um humano do time de Marketing ou Compliance.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
     # Botão de exemplo
     col_btn, _ = st.columns([2, 5])
     with col_btn:
@@ -375,7 +361,7 @@ if pagina == "Nova Análise":
             }
             st.rerun()
     
-    with st.expander("📌 Instruções de uso", expanded=False):
+    with st.expander("📌 Instruções detalhadas", expanded=False):
         st.markdown("""
         - **Campos obrigatórios**: Descrição, Objetivos, Público-alvo e Canais
         - A análise é **consultiva** — a aprovação final é sempre humana
@@ -386,51 +372,33 @@ if pagina == "Nova Análise":
     with st.form("form_analise"):
         col1, col2 = st.columns(2)
         with col1:
-            descricao = st.text_area(
-                "Descrição da ideia/projeto *",
-                height=130,
+            descricao = st.text_area("Descrição da ideia/projeto *", height=130,
                 value=st.session_state.form_defaults.get("descricao", ""),
-                placeholder="Ex: Campanha sazonal de final de ano com foco em..."
-            )
-            objetivos = st.text_area(
-                "Objetivos esperados *",
-                height=110,
+                placeholder="Ex: Campanha sazonal de final de ano com foco em...")
+            objetivos = st.text_area("Objetivos esperados *", height=110,
                 value=st.session_state.form_defaults.get("objetivos", ""),
-                placeholder="Ex: Aumentar reconhecimento de marca em 15%..."
-            )
+                placeholder="Ex: Aumentar reconhecimento de marca em 15%...")
         with col2:
-            publico_alvo = st.text_input(
-                "Público-alvo *",
+            publico_alvo = st.text_input("Público-alvo *",
                 value=st.session_state.form_defaults.get("publico_alvo", ""),
-                placeholder="Ex: Jovens adultos 25–40 anos, viajantes frequentes"
-            )
-            canais = st.text_input(
-                "Canais/plataformas *",
+                placeholder="Ex: Jovens adultos 25–40 anos, viajantes frequentes")
+            canais = st.text_input("Canais/plataformas *",
                 value=st.session_state.form_defaults.get("canais", ""),
-                placeholder="Ex: Instagram, E-mail, Site"
-            )
+                placeholder="Ex: Instagram, E-mail, Site")
         
         col3, col4 = st.columns(2)
         with col3:
-            materiais = st.text_area(
-                "Materiais já existentes (opcional)",
-                height=90,
+            materiais = st.text_area("Materiais já existentes (opcional)", height=90,
                 value=st.session_state.form_defaults.get("materiais", ""),
-                placeholder="Ex: Briefing criativo, artes anteriores..."
-            )
+                placeholder="Ex: Briefing criativo, artes anteriores...")
         with col4:
-            cronograma = st.text_input(
-                "Cronograma ou prazo (opcional)",
+            cronograma = st.text_input("Cronograma ou prazo (opcional)",
                 value=st.session_state.form_defaults.get("cronograma", ""),
-                placeholder="Ex: Lançamento em dezembro/2026"
-            )
+                placeholder="Ex: Lançamento em dezembro/2026")
         
-        duvidas = st.text_area(
-            "Dúvidas específicas (opcional)",
-            height=90,
+        duvidas = st.text_area("Dúvidas específicas (opcional)", height=90,
             value=st.session_state.form_defaults.get("duvidas", ""),
-            placeholder="Ex: Gostaria de saber se o tom está adequado..."
-        )
+            placeholder="Ex: Gostaria de saber se o tom está adequado...")
         
         submitted = st.form_submit_button("🔍 Analisar Alinhamento", type="primary", use_container_width=True)
     
@@ -441,12 +409,8 @@ if pagina == "Nova Análise":
         
         with st.spinner("🔄 Analisando alinhamento com os padrões da Azul..."):
             resultado = analisar_ideia(
-                descricao=descricao,
-                objetivos=objetivos,
-                publico_alvo=publico_alvo,
-                canais=canais,
-                materiais=materiais.strip() or None,
-                cronograma=cronograma.strip() or None,
+                descricao=descricao, objetivos=objetivos, publico_alvo=publico_alvo, canais=canais,
+                materiais=materiais.strip() or None, cronograma=cronograma.strip() or None,
                 duvidas=duvidas.strip() or None,
             )
         
@@ -468,7 +432,6 @@ if pagina == "Nova Análise":
                 st.rerun()
         
         contexto_chat = st.session_state.get("ultima_analise")
-        
         for role, msg in st.session_state.chat_history:
             with st.chat_message(role):
                 st.markdown(msg)
@@ -478,7 +441,6 @@ if pagina == "Nova Análise":
             st.session_state.chat_history.append(("user", pergunta_usuario))
             with st.chat_message("user"):
                 st.markdown(pergunta_usuario)
-            
             resposta = responder_chatbot(pergunta_usuario, contexto_chat)
             st.session_state.chat_history.append(("assistant", resposta))
             with st.chat_message("assistant"):
@@ -487,7 +449,6 @@ if pagina == "Nova Análise":
 # ==================== PÁGINA: HISTÓRICO ====================
 elif pagina == "Histórico":
     st.title("📜 Histórico de Análises")
-    
     historico_db = listar_analises()
     
     if not historico_db:
@@ -504,15 +465,8 @@ elif pagina == "Histórico":
             })
         
         df_hist = pd.DataFrame(dados_hist)
-        st.dataframe(
-            df_hist,
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Score": st.column_config.TextColumn("Score", help="Pontuação de alinhamento"),
-                "Nível": st.column_config.TextColumn("Nível", help="Verde / Amarelo / Vermelho"),
-            },
-        )
+        st.dataframe(df_hist, use_container_width=True, hide_index=True,
+            column_config={"Score": st.column_config.TextColumn("Score"), "Nível": st.column_config.TextColumn("Nível")})
         
         st.markdown("---")
         col_m, col_t = st.columns(2)
@@ -522,7 +476,6 @@ elif pagina == "Histórico":
         
         st.markdown("---")
         st.subheader("🔍 Visualizar Análise Completa")
-        
         opcoes = {f"{h['id']}  |  Score: {h['score_final']:.0f}  |  {h['timestamp'][:16]}": h for h in historico_db}
         escolha = st.selectbox("Selecione uma análise para ver os detalhes:", list(opcoes.keys()))
         
@@ -540,53 +493,22 @@ elif pagina == "Histórico":
 # ==================== PÁGINA: SOBRE ====================
 elif pagina == "Sobre":
     st.title("🔵 Sobre o Lazuli")
-    
-    st.markdown("""
-    **Lazuli** é uma ferramenta de governança que ajuda gestores e times a validar ideias e projetos 
-    contra os padrões de marca, tom de voz e comunicação da Azul Linhas Aéreas.
-    """)
+    st.markdown("**Lazuli** é uma ferramenta de governança que ajuda gestores e times a validar ideias e projetos contra os padrões de marca, tom de voz e comunicação da Azul Linhas Aéreas.")
     
     with st.expander("🏢 Valores da Azul", expanded=True):
-        st.markdown("""
-        - **Segurança** — compromisso com a segurança em todas as operações  
-        - **Inovação** — busca por soluções criativas e modernas  
-        - **Eficiência** — otimização de recursos e processos  
-        - **Respeito** — tratamento digno a clientes, colaboradores e parceiros  
-        - **Sustentabilidade** — responsabilidade ambiental e social  
-        - **Diversidade** — valorização da pluralidade e inclusão
-        """)
+        st.markdown("- **Segurança** — compromisso com a segurança em todas as operações\n- **Inovação** — busca por soluções criativas e modernas\n- **Eficiência** — otimização de recursos e processos\n- **Respeito** — tratamento digno a clientes, colaboradores e parceiros\n- **Sustentabilidade** — responsabilidade ambiental e social\n- **Diversidade** — valorização da pluralidade e inclusão")
     
     with st.expander("🎯 Tom de Voz Recomendado", expanded=True):
-        st.markdown("""
-        O tom de voz da Azul deve ser: **Acolhedor**, **Simples**, **Positivo**, **Transparente**, 
-        **Humano**, **Próximo** e **Descomplicado**.
-        
-        **Vieses proibidos:** promessa excessiva, tom agressivo, desrespeito, desinformação ou exclusão.
-        """)
+        st.markdown("O tom de voz da Azul deve ser: **Acolhedor**, **Simples**, **Positivo**, **Transparente**, **Humano**, **Próximo** e **Descomplicado**.\n\n**Vieses proibidos:** promessa excessiva, tom agressivo, desrespeito, desinformação ou exclusão.")
     
     with st.expander("📊 Categorias de Avaliação (Score 0–100)", expanded=False):
-        st.markdown("""
-        | Categoria              | Peso  | O que avalia                              |
-        |------------------------|-------|-------------------------------------------|
-        | Identidade de Marca    | 30%   | Menção à Azul + alinhamento com valores   |
-        | Tom de Voz             | 20%   | Adequação ao tom de voz institucional     |
-        | Aderência ao Público   | 15%   | Definição e adequação do público-alvo     |
-        | Clareza dos Objetivos  | 15%   | Objetivos mensuráveis e concretos         |
-        | Adequação aos Canais   | 10%   | Canais compatíveis com a estratégia       |
-        | Análise de Risco       | 10%   | Palavras de risco, promessas, concorrência|
-        """)
+        st.markdown("| Categoria | Peso | O que avalia |\n|------------------------|-------|-------------------------------------------|\n| Identidade de Marca | 30% | Menção à Azul + alinhamento com valores |\n| Tom de Voz | 20% | Adequação ao tom de voz institucional |\n| Aderência ao Público | 15% | Definição e adequação do público-alvo |\n| Clareza dos Objetivos | 15% | Objetivos mensuráveis e concretos |\n| Adequação aos Canais | 10% | Canais compatíveis com a estratégia |\n| Análise de Risco | 10% | Palavras de risco, promessas, concorrência|")
     
     with st.expander("❌ O que a ferramenta NÃO faz", expanded=False):
-        st.markdown("""
-        - Não aprova projetos definitivamente (é apenas consultiva)
-        - Não gera conteúdo final sem revisão humana
-        - Não fala em nome oficial da Azul
-        - Não trata temas proibidos (política, religião, discriminação)
-        - Não substitui o time de Marketing
-        """)
+        st.markdown("- Não aprova projetos definitivamente (é apenas consultiva)\n- Não gera conteúdo final sem revisão humana\n- Não fala em nome oficial da Azul\n- Não trata temas proibidos (política, religião, discriminação)\n- Não substitui o time de Marketing")
     
     st.markdown("---")
-    st.caption("Lazuli v1.1 • Ferramenta interna de Governança de Marca • Azul Linhas Aéreas")
+    st.caption("Lazuli v1.2 • Ferramenta interna de Governança de Marca • Azul Linhas Aéreas")
 
 st.sidebar.markdown("---")
-st.sidebar.caption("🔵 Lazuli v1.1 • Ferramenta de Governança")
+st.sidebar.caption("🔵 Lazuli v1.2 • Ferramenta de Governança")
